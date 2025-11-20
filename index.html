@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceJet - Telegram Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Экран загрузки -->
+    <div id="loadingScreen" class="screen">
+        <div class="loading-content">
+            <h1>SpaceJet</h1>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <p>Loading assets...</p>
+        </div>
+    </div>
+
+    <!-- Главное меню -->
+    <div id="menuScreen" class="screen hidden">
+        <div class="menu-content">
+            <h1>🚀 SpaceJet</h1>
+            <p>Fly through space and avoid obstacles!</p>
+            <button id="startButton" class="menu-button">START GAME</button>
+            <button id="leaderboardButton" class="menu-button">LEADERBOARD</button>
+            <div class="menu-footer">
+                <p>Controls: Arrow Keys + SPACE</p>
+                <p>Tap buttons for mobile</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Игровой экран -->
+    <div id="gameScreen" class="screen hidden">
+        <canvas id="gameCanvas"></canvas>
+        
+        <!-- Игровой UI -->
+        <div id="gameUI">
+            <div class="ui-row">
+                <div class="ui-item">
+                    <span>SCORE: </span>
+                    <span id="scoreValue">0</span>
+                </div>
+                <div class="ui-item">
+                    <span>LIVES: </span>
+                    <span id="livesValue">3</span>
+                    <img src="assets/heart.png" class="heart-icon" alt="❤">
+                </div>
+            </div>
+            <div class="ui-row">
+                <div class="ui-item">
+                    <span>BULLETS: </span>
+                    <span id="bulletsValue">5/5</span>
+                </div>
+                <div class="ui-item">
+                    <span>LEVEL: </span>
+                    <span id="levelValue">1</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Мобильное управление -->
+        <div id="mobileControls" class="mobile-controls">
+            <div class="control-row">
+                <button class="control-btn" id="leftBtn">←</button>
+                <button class="control-btn" id="upBtn">↑</button>
+                <button class="control-btn" id="rightBtn">→</button>
+            </div>
+            <div class="control-row">
+                <button class="control-btn shoot-btn" id="shootBtn">FIRE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Экран улучшений -->
+    <div id="upgradeScreen" class="screen hidden">
+        <div class="upgrade-content">
+            <h2>🎉 LEVEL UP!</h2>
+            <p>Choose your upgrade:</p>
+            <div class="upgrade-options">
+                <button class="upgrade-btn" data-upgrade="smaller">
+                    <span class="upgrade-icon">🎯</span>
+                    <span class="upgrade-title">Smaller Hitbox</span>
+                    <span class="upgrade-desc">-20% collision size</span>
+                </button>
+                <button class="upgrade-btn" data-upgrade="life">
+                    <span class="upgrade-icon">❤️</span>
+                    <span class="upgrade-title">+1 Life</span>
+                    <span class="upgrade-desc">Extra chance</span>
+                </button>
+                <button class="upgrade-btn" data-upgrade="bullets">
+                    <span class="upgrade-icon">🔫</span>
+                    <span class="upgrade-title">+5 Bullets</span>
+                    <span class="upgrade-desc">More firepower</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Экран Game Over -->
+    <div id="gameOverScreen" class="screen hidden">
+        <div class="gameover-content">
+            <h2>💥 GAME OVER</h2>
+            <div class="final-stats">
+                <p>FINAL SCORE: <span id="finalScore">0</span></p>
+                <p>HIGH SCORE: <span id="highScore">0</span></p>
+                <p>LEVEL REACHED: <span id="finalLevel">1</span></p>
+            </div>
+            <div class="gameover-buttons">
+                <button id="restartButton" class="menu-button">PLAY AGAIN</button>
+                <button id="menuButton" class="menu-button">MAIN MENU</button>
+            </div>
+            
+            <!-- Кнопка поделиться результатом -->
+            <button id="shareButton" class="share-btn">
+                📢 Share Score
+            </button>
+        </div>
+    </div>
+
+    <!-- Таблица лидеров -->
+    <div id="leaderboardScreen" class="screen hidden">
+        <div class="leaderboard-content">
+            <h2>🏆 LEADERBOARD</h2>
+            <div id="leaderboardList" class="leaderboard-list">
+                <!-- Сюда добавится список игроков -->
+            </div>
+            <button id="backButton" class="menu-button">BACK</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+    <script src="telegram-app.js"></script>
+</body>
+</html>
