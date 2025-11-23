@@ -1,0 +1,345 @@
+/* Общие стили */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: #000;
+    color: white;
+    overflow: hidden;
+    touch-action: manipulation;
+}
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #0c0c2d, #1a1a3e);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Экран загрузки */
+#loadingScreen {
+    background: #000;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.loading-content h1 {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.loading-bar {
+    width: 300px;
+    height: 20px;
+    background: #333;
+    border-radius: 10px;
+    margin: 2rem auto;
+    overflow: hidden;
+}
+
+.loading-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #4ecdc4, #44a08d);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+/* Главное меню */
+.menu-content {
+    text-align: center;
+    padding: 2rem;
+}
+
+.menu-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+}
+
+.menu-content p {
+    margin-bottom: 2rem;
+    opacity: 0.8;
+}
+
+.menu-button {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    border: none;
+    color: white;
+    padding: 1rem 2rem;
+    margin: 0.5rem;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    width: 250px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.menu-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.menu-footer {
+    margin-top: 3rem;
+    opacity: 0.6;
+    font-size: 0.9rem;
+}
+
+/* Игровой экран */
+#gameCanvas {
+    display: block;
+    background: #000;
+    width: 100%;
+    height: 100%;
+}
+
+#gameUI {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    z-index: 100;
+}
+
+.ui-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.ui-item {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+}
+
+.heart-icon {
+    width: 16px;
+    height: 16px;
+    margin-left: 5px;
+}
+
+/* Мобильное управление */
+.mobile-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    padding: 0 20px;
+    z-index: 100;
+}
+
+.control-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.control-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+}
+
+.shoot-btn {
+    width: 120px;
+    border-radius: 30px;
+    background: rgba(255, 50, 50, 0.3);
+    border-color: #ff6b6b;
+}
+
+.control-btn:active {
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(0.95);
+}
+
+/* Экран улучшений */
+.upgrade-content {
+    background: rgba(0, 0, 0, 0.9);
+    padding: 2rem;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}
+
+.upgrade-content h2 {
+    margin-bottom: 1rem;
+    color: #4ecdc4;
+}
+
+.upgrade-options {
+    margin: 2rem 0;
+}
+
+.upgrade-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #333;
+    color: white;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border-radius: 15px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: all 0.3s ease;
+}
+
+.upgrade-btn:hover {
+    border-color: #4ecdc4;
+    background: rgba(78, 205, 196, 0.1);
+}
+
+.upgrade-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.upgrade-title {
+    display: block;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.upgrade-desc {
+    display: block;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+/* Экран Game Over */
+.gameover-content {
+    background: rgba(0, 0, 0, 0.9);
+    padding: 2rem;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}
+
+.gameover-content h2 {
+    margin-bottom: 1rem;
+    color: #ff6b6b;
+}
+
+.final-stats {
+    margin: 2rem 0;
+}
+
+.final-stats p {
+    margin: 1rem 0;
+    font-size: 1.2rem;
+}
+
+.gameover-buttons {
+    margin: 2rem 0;
+}
+
+.share-btn {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    border: none;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+/* Таблица лидеров */
+.leaderboard-content {
+    background: rgba(0, 0, 0, 0.9);
+    padding: 2rem;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}
+
+.leaderboard-list {
+    margin: 2rem 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.leaderboard-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.leaderboard-rank {
+    font-weight: bold;
+    color: #4ecdc4;
+}
+
+.leaderboard-name {
+    flex-grow: 1;
+    text-align: left;
+    margin-left: 1rem;
+}
+
+.leaderboard-score {
+    font-weight: bold;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .menu-content h1 {
+        font-size: 2.5rem;
+    }
+    
+    .menu-button {
+        width: 200px;
+        padding: 0.8rem 1.5rem;
+    }
+    
+    .control-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+    
+    .shoot-btn {
+        width: 100px;
+    }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.screen:not(.hidden) {
+    animation: fadeIn 0.5s ease-out;
+}
