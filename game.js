@@ -76,19 +76,36 @@ class SpaceJetGame {
     }
     
     async loadAssets() {
-        const assets = [
-            { name: 'plane', src: 'assets/plane.png' },
-            { name: 'obstacle', src: 'assets/obstacle.png' },
-            { name: 'background', src: 'assets/background.jpg' },
-            { name: 'heart', src: 'assets/heart.png' },
-            { name: 'gameOver', src: 'assets/game-over.jpg' }
-        ];
+    const assets = [
+        { name: 'plane', src: './assets/plane.png' },
+        { name: 'obstacle', src: './assets/obstacle.png' },
+        { name: 'background', src: './assets/background.jpg' },
+        { name: 'heart', src: './assets/heart.png' },
+        { name: 'gameOver', src: './assets/game-over.jpg' }
+    ];
+    
+    console.log('🔄 Starting assets loading...');
+    
+    // Сбрасываем счетчик
+    this.loadedAssets = 0;
+    this.totalAssets = assets.length;
+    
+    try {
+        // Загружаем все картинки параллельно
+        await Promise.all(assets.map(asset => this.loadImage(asset)));
+        console.log('✅ All assets loaded successfully!');
         
-        const loadPromises = assets.map(asset => this.loadImage(asset));
-        await Promise.all(loadPromises);
-        
+        // Переходим к меню только после загрузки
         this.showScreen('menuScreen');
+        this.gameState = 'menu';
+        
+    } catch (error) {
+        console.log('❌ Some assets failed to load:', error);
+        // Все равно показываем меню, но используем fallback
+        this.showScreen('menuScreen');
+        this.gameState = 'menu';
     }
+}
     
 loadImage(asset) {
     return new Promise((resolve, reject) => {
