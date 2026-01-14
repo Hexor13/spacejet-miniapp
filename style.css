@@ -348,121 +348,46 @@ body {
 /* =========================================== */
 /* НОВОЕ РАСПОЛОЖЕНИЕ КНОПОК: ромбик справа, FIRE слева */
 /* =========================================== */
-
 .mobile-controls {
     position: absolute;
-    bottom: 80px; /* Поднять выше от низа экрана */
+    bottom: 80px;         /* ← МЕНЯЙТЕ ЭТО: выше/ниже */
     left: 0;
     right: 0;
-    height: 180px;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
     padding: 0 20px;
     z-index: 100;
-    pointer-events: none; /* Важно для корректной работы касаний */
 }
 
-/* Кнопки должны получать события */
-.mobile-controls > *,
-.mobile-controls button {
-    pointer-events: auto;
-}
-
-/* ЛЕВАЯ часть: кнопка FIRE */
+/* ЛЕВАЯ часть - кнопка FIRE */
 .left-controls {
-    flex: 1;
     display: flex;
-    justify-content: flex-start;
     align-items: center;
-    height: 100%;
+    height: 120px;
 }
 
-/* ПРАВАЯ часть: ромбик из кнопок */
+/* ПРАВАЯ часть - кнопки движения (ромбик) */
 .right-controls {
-    flex: 1;
     display: flex;
-    justify-content: flex-end;
     align-items: flex-end;
-    height: 100%;
 }
 
-/* РОМБИК (крестообразное расположение) */
+/* Ромбик из 4 кнопок движения */
 .diamond-grid {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    position: relative;
-    width: 180px;
-    height: 180px;
+    gap: 10px;
 }
 
-/* Ряды ромбика */
 .diamond-row {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
+    gap: 20px;
 }
 
-/* Верхний ряд (только ВВЕРХ) */
-.diamond-row-top {
-    height: 60px;
-    margin-bottom: 0;
-}
-
-/* Средний ряд (ВЛЕВО и ВПРАВО) */
-.diamond-row-middle {
-    height: 60px;
-    justify-content: space-around;
-    width: 120px;
-    margin: 0 auto;
-}
-
-/* Нижний ряд (только ВНИЗ) */
-.diamond-row-bottom {
-    height: 60px;
-    margin-top: 0;
-}
-
-/* Стили кнопок (используем существующие, но с небольшой корректировкой) */
-.control-btn {
-    margin: 0; /* Убираем возможные отступы */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Кнопка FIRE слева - увеличиваем немного */
-.shoot-btn {
-    width: 120px;
-    height: 120px;
-    border-radius: 60px;
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-}
-
-/* Адаптивность для маленьких экранов */
-@media (max-width: 400px) {
-    .mobile-controls {
-        bottom: 40px;
-        padding: 0 10px;
-    }
-    
-    .control-btn {
-        width: 50px;
-        height: 50px;
-        font-size: 1.2rem;
-    }
-    
-    .shoot-btn {
-        width: 100px;
-        height: 100px;
-    }
-    
-    .diamond-grid {
-        width: 150px;
-        height: 150px;
-    }
+/* Средний ряд с ← и → */
+.diamond-row:nth-child(2) {
+    width: 140px;
+    justify-content: space-between;
 }
