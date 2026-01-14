@@ -1,10 +1,3 @@
-console.log('=== ЗАГРУЗКА ТЕКСТУР ===');
-console.log('Проверяем пути к файлам:');
-console.log('1. plane.png:', new URL('./assets/plane.png', window.location.href).href);
-console.log('2. obstacle.png:', new URL('./assets/obstacle.png', window.location.href).href);
-console.log('3. heart.png:', new URL('./assets/heart.png', window.location.href).href);
-console.log('4. background.jpg:', new URL('./assets/background.jpg', window.location.href).href);
-
 
 // SpaceJet Game - Minimal Working Version
 class SpaceJetGame {
