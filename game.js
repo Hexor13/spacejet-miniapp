@@ -19,7 +19,38 @@ class SpaceJetGame {
         
         this.init();
     }
+    loadTextures() {
+    // Загружаем текстуры
+    this.textures = {
+        player: new Image(),
+        enemy: new Image(),
+        bullet: new Image(),
+        heart: new Image()
+    };
     
+    // Указываем пути к вашим картинкам
+    this.textures.player.src = './assets/player.png';    // ваш корабль
+    this.textures.enemy.src = './assets/enemy.png';      // ваши враги
+    this.textures.bullet.src = './assets/bullet.png';    // ваши пули
+    this.textures.heart.src = './assets/heart.png';      // ваши сердечки
+    
+    // Ждем загрузки всех текстур
+    let loaded = 0;
+    const total = Object.keys(this.textures).length;
+    
+    Object.values(this.textures).forEach(img => {
+        img.onload = () => {
+            loaded++;
+            if (loaded === total) {
+                console.log('Все текстуры загружены!');
+                // Можно начать игру
+            }
+        };
+        img.onerror = () => {
+            console.log('Ошибка загрузки текстуры:', img.src);
+        };
+    });
+}
     init() {
         this.resizeCanvas();
         this.setupControls();
