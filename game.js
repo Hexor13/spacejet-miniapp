@@ -16,41 +16,67 @@ class SpaceJetGame {
         this.obstacles = [];
         this.bullets = [];
         this.keys = {};
+        this.texturesLoaded = false;
         
         this.init();
+        this.loadTextures();
     }
+    
     loadTextures() {
-    // Загружаем текстуры
-    this.textures = {
-        player: new Image(),
-        enemy: new Image(),
-        bullet: new Image(),
-        heart: new Image()
-    };
-    
-    // Указываем пути к вашим картинкам
-    this.textures.player.src = './assets/player.png';    // ваш корабль
-    this.textures.enemy.src = './assets/enemy.png';      // ваши враги
-    this.textures.bullet.src = './assets/bullet.png';    // ваши пули
-    this.textures.heart.src = './assets/heart.png';      // ваши сердечки
-    
-    // Ждем загрузки всех текстур
-    let loaded = 0;
-    const total = Object.keys(this.textures).length;
-    
-    Object.values(this.textures).forEach(img => {
-        img.onload = () => {
-            loaded++;
-            if (loaded === total) {
-                console.log('Все текстуры загружены!');
-                // Можно начать игру
-            }
+        // Загружаем текстуры
+        this.textures = {
+            player: new Image(),
+            obstacle: new Image(),
+            bullet: new Image(),
+            heart: new Image(),
+            background: new Image()
         };
-        img.onerror = () => {
-            console.log('Ошибка загрузки текстуры:', img.src);
-        };
-    });
-}
+        
+        // Указываем пути к вашим картинкам
+        this.textures.player.src = './assets/player.png';      // ваш корабль
+        this.textures.obstacle.src = './assets/obstacle.png';        // ваши враги
+        this.textures.bullet.src = './assets/bullet.png';      // ваши пули
+        this.textures.heart.src = './assets/heart.png';        // ваши сердечки
+        this.textures.background.src = './assets/background.png'; // фон (опционально)
+        
+        // Счётчик загруженных текстур
+        let loadedCount = 0;
+        const totalTextures = Object.keys(this.textures).length;
+        
+        // Проверяем загрузку каждой текстуры
+        Object.values(this.textures).forEach(img => {
+            img.onload = () => {
+                loadedCount++;
+                console.log(`✅ Загружено: ${loadedCount}/${totalTextures}`);
+                
+                if (loadedCount === totalTextures) {
+                    this.texturesLoaded = true;
+                    console.log('✅ Все текстуры загружены!');
+                    
+                    // Если уже в меню, обновляем отображение
+                    if (this.gameState === 'menu') {
+                        this.renderMenu();
+                    }
+                }
+            };
+            
+            img.onerror = (e) => {
+                console.log(`❌ Ошибка загрузки: ${img.src}`);
+                console.log('Проверьте:');
+                console.log('1. Файл существует в папке assets/');
+                console.log('2. Правильное название файла');
+                console.log('3. Файл загружен на GitHub');
+                
+                // Увеличиваем счётчик даже при ошибке, чтобы игра не зависла
+                loadedCount++;
+                if (loadedCount === totalTextures) {
+                    this.texturesLoaded = false;
+                    console.log('⚠️ Некоторые текстуры не загрузились, используем фигуры');
+                }
+            };
+        });
+    }
+    
     init() {
         this.resizeCanvas();
         this.setupControls();
@@ -205,33 +231,58 @@ class SpaceJetGame {
     }
     
     render() {
-        // Черный фон
-        this.ctx.fillStyle = '#000';
-        this.ctx.fillRect(0, 0, this.config.WIDTH, this.config.HEIGHT);
+        // Очищаем canvas
+        this.ctx.clearRect(0, 0, this.config.WIDTH, this.config.HEIGHT);
         
-        // Игрок (синий квадрат)
-        this.ctx.fillStyle = '#4ecdc4';
-        this.ctx.fillRect(this.player.x, this.player.y, 50, 50);
+        // Фон (если есть текстура, иначе черный)
+        if (this.textures.background.complete && this.texturesLoaded) {
+            this.ctx.drawImage(this.textures.background, 0, 0, this.config.WIDTH, this.config.HEIGHT);
+        } else {
+            this.ctx.fillStyle = '#000';
+            this.ctx.fillRect(0, 0, this.config.WIDTH, this.config.HEIGHT);
+        }
         
-        // Препятствия (красные круги)
-        this.ctx.fillStyle = '#ff6b6b';
+        // Игрок (текстура или синий квадрат)
+        if (this.textures.player.complete && this.texturesLoaded) {
+            this.ctx.drawImage(this.textures.player, this.player.x, this.player.y, 50, 50);
+        } else {
+            this.ctx.fillStyle = '#4ecdc4';
+            this.ctx.fillRect(this.player.x, this.player.y, 50, 50);
+        }
+        
+        // Препятствия (текстура или красные круги)
         this.obstacles.forEach(obstacle => {
-            this.ctx.beginPath();
-            this.ctx.arc(obstacle.x + 25, obstacle.y + 25, 25, 0, Math.PI * 2);
-            this.ctx.fill();
+            if (this.textures.obstacle.complete && this.texturesLoaded) {
+                this.ctx.drawImage(this.textures.obstacle, obstacle.x, obstacle.y, 50, 50);
+            } else {
+                this.ctx.fillStyle = '#ff6b6b';
+                this.ctx.beginPath();
+                this.ctx.arc(obstacle.x + 25, obstacle.y + 25, 25, 0, Math.PI * 2);
+                this.ctx.fill();
+            }
         });
         
-        // Пули (желтые прямоугольники)
-        this.ctx.fillStyle = '#ffff00';
+        // Пули (текстура или желтые прямоугольники)
         this.bullets.forEach(bullet => {
-            this.ctx.fillRect(bullet.x, bullet.y, 5, 15);
+            if (this.textures.bullet.complete && this.texturesLoaded) {
+                this.ctx.drawImage(this.textures.bullet, bullet.x, bullet.y, 5, 15);
+            } else {
+                this.ctx.fillStyle = '#ffff00';
+                this.ctx.fillRect(bullet.x, bullet.y, 5, 15);
+            }
         });
         
-        // UI
+        // UI на канвасе (дополнительные сердечки)
+        if (this.textures.heart.complete && this.texturesLoaded) {
+            for (let i = 0; i < this.player.lives; i++) {
+                this.ctx.drawImage(this.textures.heart, 120 + i * 35, 45, 30, 30);
+            }
+        }
+        
+        // UI текст на канвасе (если хотите)
         this.ctx.fillStyle = '#fff';
         this.ctx.font = '20px Arial';
         this.ctx.fillText(`Score: ${this.score}`, 10, 30);
-        this.ctx.fillText(`Lives: ${this.player.lives}`, 10, 60);
         this.ctx.fillText(`Bullets: ${this.player.bulletStorage}/5`, 10, 90);
     }
     
@@ -248,6 +299,12 @@ class SpaceJetGame {
     gameOver() {
         this.gameState = 'gameover';
         document.getElementById('finalScore').textContent = this.score;
+        
+        // Сохраняем рекорд если есть Telegram
+        if (window.telegramApp && window.telegramApp.tg) {
+            window.telegramApp.saveScore(this.score);
+        }
+        
         this.showScreen('gameOverScreen');
     }
     
@@ -256,6 +313,13 @@ class SpaceJetGame {
             screen.classList.add('hidden');
         });
         document.getElementById(screenId).classList.remove('hidden');
+    }
+    
+    // Рендер меню с текстурами
+    renderMenu() {
+        if (this.texturesLoaded) {
+            console.log('Меню с текстурами готово');
+        }
     }
 }
 
@@ -279,4 +343,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Сразу показываем меню
     game.showScreen('menuScreen');
+    
+    // Проверка загрузки текстур через 3 секунды
+    setTimeout(() => {
+        if (!game.texturesLoaded) {
+            console.log('⚠️ Текстуры всё ещё загружаются...');
+            console.log('Проверьте консоль на ошибки загрузки');
+        }
+    }, 3000);
 });
