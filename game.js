@@ -100,7 +100,7 @@ class SpaceJetGame {
             width: 50,
             height: 50,
             lives: 3,
-            bulletStorage: 5,
+            bulletStorage: 50,
             fireCooldown: 0
         };
         
