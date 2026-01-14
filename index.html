@@ -63,18 +63,28 @@
         </div>
 
         <!-- Мобильное управление -->
-        <div id="mobileControls" class="mobile-controls">
-            <div class="control-row">
-                <button class="control-btn" id="leftBtn">←</button>
-                <button class="control-btn" id="upBtn">↑</button>
-                <button class="control-btn" id="rightBtn">→</button>
-            </div>
-            <div class="control-row">
-                <button class="control-btn" id="downBtn">↓</button>
-                <button class="control-btn shoot-btn" id="shootBtn">FIRE</button>
-            </div>
-        </div>
-    </div>
+	<div id="mobileControls" class="mobile-controls">
+   	 	<!-- ЛЕВАЯ часть: кнопка FIRE -->
+    		<div class="left-controls">
+        		<button class="control-btn shoot-btn" id="shootBtn">FIRE</button>
+    		</div>
+    
+    		<!-- ПРАВАЯ часть: 4 кнопки движения в виде ромбика -->
+    		<div class="right-controls">
+        	<div class="diamond-grid">
+            		<div class="diamond-row">
+                		<button class="control-btn" id="upBtn">↑</button>
+            		</div>
+            		<div class="diamond-row">
+                		<button class="control-btn" id="leftBtn">←</button>
+                		<button class="control-btn" id="rightBtn">→</button>
+            		</div>
+            		<div class="diamond-row">
+                		<button class="control-btn" id="downBtn">↓</button>
+            		</div>
+        	</div>
+    	</div>
+</div>
 
     <!-- Экран улучшений -->
     <div id="upgradeScreen" class="screen hidden">
