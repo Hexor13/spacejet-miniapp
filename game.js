@@ -17,16 +17,20 @@ class SpaceJetGame {
         this.bullets = [];
         this.keys = {};
         this.texturesLoaded = false;
-        this.mobileButtons = {}; // Для отслеживания состояния мобильных кнопок
+        this.mobileButtons = {
+            left: false,
+            right: false,
+            up: false,
+            down: false,  // ДОБАВЛЕНО
+            shoot: false
+        };
         
         this.init();
         this.loadTextures();
-        this.setupMobileControls(); // Добавляем мобильное управление
-        this.setupBackButton(); // Добавляем кнопку "Назад"
+        this.setupMobileControls();
     }
     
     loadTextures() {
-        // Загружаем только нужные текстуры (пули рисуем программно)
         this.textures = {
             player: new Image(),
             enemy: new Image(),
@@ -43,19 +47,8 @@ class SpaceJetGame {
         const totalTextures = Object.keys(this.textures).length;
         
         Object.values(this.textures).forEach(img => {
-            img.onload = () => {
-                loadedCount++;
-                if (loadedCount === totalTextures) {
-                    this.texturesLoaded = true;
-                }
-            };
-            
-            img.onerror = () => {
-                loadedCount++;
-                if (loadedCount === totalTextures) {
-                    this.texturesLoaded = false;
-                }
-            };
+            img.onload = () => loadedCount++ === totalTextures - 1 && (this.texturesLoaded = true);
+            img.onerror = () => loadedCount++ === totalTextures - 1 && (this.texturesLoaded = false);
         });
     }
     
@@ -71,77 +64,33 @@ class SpaceJetGame {
     }
     
     setupKeyboardControls() {
-        // Клавиатура
-        document.addEventListener('keydown', (e) => {
-            this.keys[e.code] = true;
-        });
-        
-        document.addEventListener('keyup', (e) => {
-            this.keys[e.code] = false;
-        });
+        document.addEventListener('keydown', (e) => this.keys[e.code] = true);
+        document.addEventListener('keyup', (e) => this.keys[e.code] = false);
     }
     
     setupMobileControls() {
-        // Инициализируем состояние кнопок
-        this.mobileButtons = {
-            left: false,
-            right: false,
-            up: false,
-            shoot: false
-        };
+        const buttons = ['leftBtn', 'rightBtn', 'upBtn', 'downBtn', 'shootBtn'];
+        const directions = ['left', 'right', 'up', 'down', 'shoot'];
         
-        // Находим кнопки
-        const leftBtn = document.getElementById('leftBtn');
-        const rightBtn = document.getElementById('rightBtn');
-        const upBtn = document.getElementById('upBtn');
-        const shootBtn = document.getElementById('shootBtn');
-        
-        // Функции для обработки нажатий
-        const addButtonListeners = (button, direction) => {
+        buttons.forEach((btnId, index) => {
+            const button = document.getElementById(btnId);
             if (!button) return;
             
-            // Нажатие
             const downHandler = (e) => {
                 e.preventDefault();
-                this.mobileButtons[direction] = true;
+                this.mobileButtons[directions[index]] = true;
                 button.classList.add('active');
             };
             
-            // Отпускание
             const upHandler = (e) => {
                 e.preventDefault();
-                this.mobileButtons[direction] = false;
+                this.mobileButtons[directions[index]] = false;
                 button.classList.remove('active');
             };
             
-            // Добавляем обработчики для мыши
-            button.addEventListener('mousedown', downHandler);
-            button.addEventListener('mouseup', upHandler);
-            button.addEventListener('mouseleave', upHandler);
-            
-            // Добавляем обработчики для касания
-            button.addEventListener('touchstart', downHandler);
-            button.addEventListener('touchend', upHandler);
-            button.addEventListener('touchcancel', upHandler);
-        };
-        
-        // Настраиваем кнопки
-        addButtonListeners(leftBtn, 'left');
-        addButtonListeners(rightBtn, 'right');
-        addButtonListeners(upBtn, 'up');
-        addButtonListeners(shootBtn, 'shoot');
-    }
-    
-    setupBackButton() {
-        const backBtn = document.getElementById('backGameBtn');
-        if (backBtn) {
-            backBtn.addEventListener('click', () => {
-                if (confirm('Вернуться в меню? Текущий прогресс будет потерян.')) {
-                    this.stopGame();
-                    this.showScreen('menuScreen');
-                }
-            });
-        }
+            ['mousedown', 'touchstart'].forEach(event => button.addEventListener(event, downHandler));
+            ['mouseup', 'mouseleave', 'touchend', 'touchcancel'].forEach(event => button.addEventListener(event, upHandler));
+        });
     }
     
     startGame() {
@@ -162,15 +111,11 @@ class SpaceJetGame {
         this.showScreen('gameScreen');
         this.gameState = 'playing';
         this.gameLoop();
-        
         this.startObstacleSpawning();
     }
     
     startObstacleSpawning() {
-        // Очищаем предыдущий интервал если есть
-        if (this.obstacleInterval) {
-            clearInterval(this.obstacleInterval);
-        }
+        if (this.obstacleInterval) clearInterval(this.obstacleInterval);
         
         this.obstacleInterval = setInterval(() => {
             if (this.gameState === 'playing') {
@@ -194,35 +139,20 @@ class SpaceJetGame {
     }
     
     update() {
-        // Движение игрока - КЛАВИАТУРА
-        if (this.keys['ArrowLeft'] || this.keys['KeyA']) {
-            this.player.x = Math.max(0, this.player.x - 5);
-        }
-        if (this.keys['ArrowRight'] || this.keys['KeyD']) {
-            this.player.x = Math.min(this.config.WIDTH - 50, this.player.x + 5);
-        }
-        if (this.keys['ArrowUp'] || this.keys['KeyW']) {
-            this.player.y = Math.max(0, this.player.y - 5);
-        }
-        if (this.keys['ArrowDown'] || this.keys['KeyS']) {
-            this.player.y = Math.min(this.config.HEIGHT - 50, this.player.y + 5);
-        }
+        // Клавиатура
+        if (this.keys['ArrowLeft'] || this.keys['KeyA']) this.player.x = Math.max(0, this.player.x - 5);
+        if (this.keys['ArrowRight'] || this.keys['KeyD']) this.player.x = Math.min(this.config.WIDTH - 50, this.player.x + 5);
+        if (this.keys['ArrowUp'] || this.keys['KeyW']) this.player.y = Math.max(0, this.player.y - 5);
+        if (this.keys['ArrowDown'] || this.keys['KeyS']) this.player.y = Math.min(this.config.HEIGHT - 50, this.player.y + 5);
         
-        // Движение игрока - МОБИЛЬНЫЕ КНОПКИ
-        if (this.mobileButtons.left) {
-            this.player.x = Math.max(0, this.player.x - 5);
-        }
-        if (this.mobileButtons.right) {
-            this.player.x = Math.min(this.config.WIDTH - 50, this.player.x + 5);
-        }
-        if (this.mobileButtons.up) {
-            this.player.y = Math.max(0, this.player.y - 5);
-        }
+        // Мобильные кнопки
+        if (this.mobileButtons.left) this.player.x = Math.max(0, this.player.x - 5);
+        if (this.mobileButtons.right) this.player.x = Math.min(this.config.WIDTH - 50, this.player.x + 5);
+        if (this.mobileButtons.up) this.player.y = Math.max(0, this.player.y - 5);
+        if (this.mobileButtons.down) this.player.y = Math.min(this.config.HEIGHT - 50, this.player.y + 5);
         
-        // Стрельба - КЛАВИАТУРА
-        if (this.player.fireCooldown > 0) {
-            this.player.fireCooldown--;
-        }
+        // Стрельба
+        if (this.player.fireCooldown > 0) this.player.fireCooldown--;
         
         if ((this.keys['Space'] || this.mobileButtons.shoot) && 
             this.player.bulletStorage > 0 && 
@@ -236,38 +166,25 @@ class SpaceJetGame {
             });
             this.player.bulletStorage--;
             this.player.fireCooldown = 15;
-            
-            // Сбрасываем состояние кнопки стрельбы (чтобы не залипала)
             this.mobileButtons.shoot = false;
-            document.getElementById('shootBtn')?.classList.remove('active');
         }
         
-        // Обновление препятствий
-        this.obstacles.forEach(obstacle => {
-            obstacle.y += obstacle.speed;
-        });
-        this.obstacles = this.obstacles.filter(obs => obs.y < this.config.HEIGHT);
+        // Обновление препятствий и пуль
+        this.obstacles.forEach(o => o.y += o.speed);
+        this.obstacles = this.obstacles.filter(o => o.y < this.config.HEIGHT);
         
-        // Обновление пуль
-        this.bullets.forEach(bullet => {
-            bullet.y += bullet.speed;
-        });
-        this.bullets = this.bullets.filter(bullet => bullet.y > -20);
+        this.bullets.forEach(b => b.y += b.speed);
+        this.bullets = this.bullets.filter(b => b.y > -20);
         
-        // Проверка коллизий
+        // Коллизии и UI
         this.checkCollisions();
-        
-        // Обновление UI
         this.updateUI();
     }
     
     checkCollisions() {
-        // Пули с препятствиями
         for (let i = this.bullets.length - 1; i >= 0; i--) {
-            const bullet = this.bullets[i];
             for (let j = this.obstacles.length - 1; j >= 0; j--) {
-                const obstacle = this.obstacles[j];
-                if (this.isColliding(bullet, obstacle)) {
+                if (this.isColliding(this.bullets[i], this.obstacles[j])) {
                     this.bullets.splice(i, 1);
                     this.obstacles.splice(j, 1);
                     this.score += 1;
@@ -276,15 +193,11 @@ class SpaceJetGame {
             }
         }
         
-        // Игрок с препятствиями
         for (let i = this.obstacles.length - 1; i >= 0; i--) {
-            const obstacle = this.obstacles[i];
-            if (this.isColliding(this.player, obstacle)) {
+            if (this.isColliding(this.player, this.obstacles[i])) {
                 this.obstacles.splice(i, 1);
                 this.player.lives--;
-                if (this.player.lives <= 0) {
-                    this.gameOver();
-                }
+                if (this.player.lives <= 0) this.gameOver();
                 break;
             }
         }
@@ -298,27 +211,22 @@ class SpaceJetGame {
     }
     
     render() {
-        // Очищаем canvas
         this.ctx.clearRect(0, 0, this.config.WIDTH, this.config.HEIGHT);
         
-        // Фон
         if (this.textures.background.complete && this.texturesLoaded) {
             this.ctx.drawImage(this.textures.background, 0, 0, this.config.WIDTH, this.config.HEIGHT);
         } else {
             this.ctx.fillStyle = '#000';
             this.ctx.fillRect(0, 0, this.config.WIDTH, this.config.HEIGHT);
             
-            // Звёзды
             this.ctx.fillStyle = '#fff';
             for (let i = 0; i < 50; i++) {
                 const x = Math.random() * this.config.WIDTH;
                 const y = Math.random() * this.config.HEIGHT;
-                const size = Math.random() * 2;
-                this.ctx.fillRect(x, y, size, size);
+                this.ctx.fillRect(x, y, Math.random() * 2, Math.random() * 2);
             }
         }
         
-        // Игрок
         if (this.textures.player.complete && this.texturesLoaded) {
             this.ctx.drawImage(this.textures.player, this.player.x, this.player.y, 50, 50);
         } else {
@@ -326,7 +234,6 @@ class SpaceJetGame {
             this.ctx.fillRect(this.player.x, this.player.y, 50, 50);
         }
         
-        // Враги
         this.obstacles.forEach(obstacle => {
             if (this.textures.enemy.complete && this.texturesLoaded) {
                 this.ctx.drawImage(this.textures.enemy, obstacle.x, obstacle.y, 50, 50);
@@ -338,13 +245,9 @@ class SpaceJetGame {
             }
         });
         
-        // Пули
         this.ctx.fillStyle = '#ffff00';
-        this.bullets.forEach(bullet => {
-            this.ctx.fillRect(bullet.x, bullet.y, 5, 15);
-        });
+        this.bullets.forEach(b => this.ctx.fillRect(b.x, b.y, 5, 15));
         
-        // UI на канвасе
         this.ctx.fillStyle = '#fff';
         this.ctx.font = 'bold 20px Arial';
         this.ctx.fillText(`Score: ${this.score}`, 10, 30);
@@ -352,70 +255,35 @@ class SpaceJetGame {
     }
     
     updateUI() {
-        const scoreElement = document.getElementById('scoreValue');
-        const livesElement = document.getElementById('livesValue');
-        const bulletsElement = document.getElementById('bulletsValue');
-        
-        if (scoreElement) scoreElement.textContent = this.score;
-        if (livesElement) livesElement.textContent = this.player.lives;
-        if (bulletsElement) bulletsElement.textContent = `${this.player.bulletStorage}/5`;
+        document.getElementById('scoreValue').textContent = this.score;
+        document.getElementById('livesValue').textContent = this.player.lives;
+        document.getElementById('bulletsValue').textContent = `${this.player.bulletStorage}/5`;
     }
     
     gameOver() {
         this.gameState = 'gameover';
         clearInterval(this.obstacleInterval);
         document.getElementById('finalScore').textContent = this.score;
-        
-        // Сохраняем рекорд если есть Telegram
-        if (window.telegramApp && window.telegramApp.tg) {
-            window.telegramApp.saveScore(this.score);
-        }
-        
+        if (window.telegramApp?.tg) window.telegramApp.saveScore(this.score);
         this.showScreen('gameOverScreen');
     }
     
-    stopGame() {
-        this.gameState = 'menu';
-        if (this.obstacleInterval) {
-            clearInterval(this.obstacleInterval);
-            this.obstacleInterval = null;
-        }
-    }
-    
     showScreen(screenId) {
-        document.querySelectorAll('.screen').forEach(screen => {
-            screen.classList.add('hidden');
-        });
+        document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
         document.getElementById(screenId).classList.remove('hidden');
     }
 }
 
-// Запуск игры
 document.addEventListener('DOMContentLoaded', () => {
     const game = new SpaceJetGame();
     
-    document.getElementById('startButton').addEventListener('click', () => {
-        game.startGame();
-    });
+    ['startButton', 'restartButton'].forEach(id => 
+        document.getElementById(id).addEventListener('click', () => game.startGame()));
     
-    document.getElementById('restartButton').addEventListener('click', () => {
-        game.startGame();
-    });
-    
-    document.getElementById('menuButton').addEventListener('click', () => {
-        game.showScreen('menuScreen');
-    });
-    
-    document.getElementById('leaderboardButton').addEventListener('click', () => {
-        game.showScreen('leaderboardScreen');
-    });
-    
-    document.getElementById('backButton').addEventListener('click', () => {
-        game.showScreen('menuScreen');
-    });
+    document.getElementById('menuButton').addEventListener('click', () => game.showScreen('menuScreen'));
+    document.getElementById('leaderboardButton').addEventListener('click', () => game.showScreen('leaderboardScreen'));
+    document.getElementById('backButton').addEventListener('click', () => game.showScreen('menuScreen'));
     
     window.game = game;
-    
-    // Сразу показываем меню
     game.showScreen('menuScreen');
 });
