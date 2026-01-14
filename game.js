@@ -22,6 +22,7 @@ class SpaceJetGame {
         this.init();
         this.loadTextures();
         this.setupMobileControls(); // Добавляем мобильное управление
+        this.setupBackButton(); // Добавляем кнопку "Назад"
     }
     
     loadTextures() {
@@ -129,6 +130,18 @@ class SpaceJetGame {
         addButtonListeners(rightBtn, 'right');
         addButtonListeners(upBtn, 'up');
         addButtonListeners(shootBtn, 'shoot');
+    }
+    
+    setupBackButton() {
+        const backBtn = document.getElementById('backGameBtn');
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                if (confirm('Вернуться в меню? Текущий прогресс будет потерян.')) {
+                    this.stopGame();
+                    this.showScreen('menuScreen');
+                }
+            });
+        }
     }
     
     startGame() {
@@ -359,6 +372,14 @@ class SpaceJetGame {
         }
         
         this.showScreen('gameOverScreen');
+    }
+    
+    stopGame() {
+        this.gameState = 'menu';
+        if (this.obstacleInterval) {
+            clearInterval(this.obstacleInterval);
+            this.obstacleInterval = null;
+        }
     }
     
     showScreen(screenId) {
